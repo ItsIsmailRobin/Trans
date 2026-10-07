@@ -1,6 +1,7 @@
-# TranscribeFix
+# TranscribeFix 2
 
-Manual Bengali 2-speaker transcription workbench. No AI, no API, no server: it runs fully in the browser.
+Bengali 2-speaker transcription workbench, synced with the BN Style Guide v3.1.5 and the BN Tag Taxonomy.
+Runs in the browser; nothing is stored on a server.
 
 ## Run
     npm install
@@ -8,14 +9,16 @@ Manual Bengali 2-speaker transcription workbench. No AI, no API, no server: it r
     npm run build    # outputs dist/
 
 ## Deploy on Vercel
-Push this folder to GitHub, then import it in Vercel. It is detected as a Vite project (build `npm run build`, output `dist`). No environment variables.
-The style guide is confidential: enable Vercel Deployment Protection (password) on the project.
+Push this folder to GitHub and import it in Vercel. It is detected as a Vite project (build `npm run build`, output `dist`). No environment variables.
+The style guide is confidential: turn on Vercel Deployment Protection (password) for the project.
 
 ## Workflow
-1. Pick Speaker 1 and Speaker 2 audio. Import a machine transcript (JSON or `[00:01.20 - 00:03.50] Speaker 1: text`) if you have one, or press Auto-segment.
-2. Select a line: it plays. Type the text; insert tags from the palette. Enter moves to the next line.
-3. Fix timestamps by dragging edges, typing times, or Snap. Use Both to hear both speakers on hard parts.
-4. Clear every red dot, tick Reviewed, export.
+1. Add Speaker 1 and Speaker 2 audio (click or drag a file onto the chip). Click a file name to replace it, or ✕ to remove it.
+2. Press **Transcribe** for a Bengali machine draft (it runs Auto-segment first if there are no lines), or Import a machine transcript.
+   - **In this browser**: free and private Whisper. The model downloads once (Small ≈ 250 MB), then is cached.
+   - **Online API**: best accuracy. Works with Groq (`whisper-large-v3`), OpenAI (`gpt-4o-transcribe`) or any OpenAI-compatible endpoint, using your own key (kept only in this browser).
+3. Select a line to play it. Correct the text; insert tags from the Tags panel (search in Bengali or English, Alt+K, Enter inserts the first match).
+4. Fix timestamps by dragging edges, typing times, or Snap. Use Both to hear both speakers on hard parts.
+5. Run Fix rules, clear every red dot, tick Reviewed, export.
 
-Hotkeys: Space / Ctrl+Enter play-pause, Alt+Up/Down line, Alt+Left/Right 2s, Alt+L loop, Alt+B both, Alt+N new line, Alt+S split, Alt+M merge, Alt+T snap, Alt+Z / Alt+Y undo / redo.
-Work autosaves in this browser per pair of audio files.
+Lines show "Machine draft" until you edit or review them. Work autosaves in this browser per pair of audio files.
