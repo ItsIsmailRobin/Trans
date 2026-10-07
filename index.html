@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TranscribeFix · Bengali 2-Speaker Transcription</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+Bengali:wght@400;600&display=swap" rel="stylesheet"></head><body>
+<header class="top"><div class="logo">T</div><b>TranscribeFix</b>
+<label class="fc c1"><i>Speaker 1</i><span id="n1">Choose audio…</span><input type="file" id="f1" accept="audio/*"></label>
+<label class="fc c2"><i>Speaker 2</i><span id="n2">Choose audio…</span><input type="file" id="f2" accept="audio/*"></label>
+<label class="btn">Import<input type="file" id="imp" accept=".json,.txt"></label><button id="xj">Export JSON</button><button id="xt">Export TXT</button>
+<details id="rul"><summary>Rules</summary><div class="pop"><b>Style guide v3.1.5 quick check</b><ul>
+<li>New segment only after ≥1s silence; shorter gaps stay in one segment.</li>
+<li>Every segment ends with punctuation (। ? ! …); tags go after it.</li>
+<li>One-word stutter <code>আমি - আমি</code>; multi-word restart or cut-off word <code>--</code> + space; resume with <code>...শব্দ</code>.</li>
+<li>Numbers: <code>১৪ {PRO: চোদ্দ}</code>. Idioms (একমাত্র, প্রথমত) stay words.</li>
+<li>Wrong word that is a real word: keep as said. Non-word, clear intent: <code>সঠিক {MIS: যা বলা}</code>. Unclear: phonetic. Unintelligible: <code>[অবোধগম্য]</code>.</li>
+<li>English proper nouns in English (iPhone, YouTube). Acronyms as-is.</li>
+<li>Fillers only: আহ আহা অউ এহ আ অ হুম হুহ হু-হু ওহ ওহহো উহ.</li>
+<li><code>*জোর*</code> rare. Emotion tags under 1% of words, under 50 words each.</li>
+<li>Don't tag ordinary breaths or lip sounds. Never write channel bleed.</li>
+<li>Timestamps within 50ms: no clipping, no padding. Hard parts: use <b>Both</b> and listen 5–10s around.</li></ul></div></details>
+<span id="st">Choose audio for Speaker 1 and Speaker 2.</span></header>
+<div class="ctl">
+<button id="pv" title="Previous line (Alt+↑)">⏮</button><button id="bk" title="Back 2s (Alt+←)">⏪</button><button id="pp" class="go" title="Play / pause (Space or Ctrl+Enter)">▶</button><button id="fw" title="Forward 2s (Alt+→)">⏩</button><button id="nx" title="Next line (Alt+↓ or Enter)">⏭</button>
+<span id="tm" class="t">00:00.00 / 00:00.00</span>
+<button id="lp" class="tg" title="Loop line (Alt+L)">Loop</button><button id="bt" class="tg" title="Play both speakers together (Alt+B)">Both</button>
+<select id="rt" title="Speed"><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select>
+<label>Zoom <input type="range" id="zm" min="1" max="20" step=".5" value="1"></label>
+<label title="Speech detection level for auto-segment and snap">Sens <input type="range" id="sens" min="2" max="30" value="8"></label>
+<span class="sep"></span>
+<button id="as" title="Cut each track into lines at ≥1s silences">Auto-segment</button><button id="a1" title="New line at playhead, Speaker 1">+S1</button><button id="a2" title="New line at playhead, Speaker 2">+S2</button><button id="sp" title="Split at playhead (Alt+S)">Split</button><button id="mg" title="Merge with next (Alt+M)">Merge</button><button id="sn" title="Snap edges to speech (Alt+T)">Snap</button>
+<button id="af" title="Apply rule-based fixes to all lines">Fix rules</button><button id="un" title="Undo (Alt+Z)">↶</button><button id="re" title="Redo (Alt+Y)">↷</button></div>
+<div id="pal" class="pal"></div>
+<section id="wave" hidden><div id="lbs"><div class="spc"></div>
+<div class="lb" id="lb1"><b class="x1">Speaker 1</b><span id="ls1"></span><button class="mu" data-n="1">Mute</button></div>
+<div class="lb" id="lb2"><b class="x2">Speaker 2</b><span id="ls2"></span><button class="mu" data-n="2">Mute</button></div></div>
+<div id="cv"><div id="in"><canvas id="rl" height="18"></canvas><canvas id="c1" height="84"></canvas><canvas id="c2" height="84"></canvas><i id="ph"></i></div></div></section>
+<div class="bar"><select id="flt"><option value="0">All tracks</option><option value="1">Speaker 1</option><option value="2">Speaker 2</option></select><span class="pill" id="cnt"></span><small>Drag on a waveform to add a line · drag edges to resize · double-click a line to play · Enter = next line</small></div>
+<div id="tb"><table><thead><tr><th>#</th><th>Spk</th><th>Start</th><th>End</th><th class="w">Text</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+<script type="module" src="/src/main.js"></script></body></html>
