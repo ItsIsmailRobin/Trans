@@ -31,6 +31,27 @@ const EMO_N = EMO.map(x => x[0]);
 const BGP = BG_PLAIN.map(x => x[0]);
 const BGI = BG_INT.map(x => x[0]);
 
+/* Unicode-safe tag lookup: য়/ড়/ঢ় can be typed two ways */
+const N = t => t.normalize('NFC');
+const CANON = new Map();
+[...NS, ...BGP, ...BGI, ...ST].forEach(t => CANON.set(N(t), t));
+BGI.forEach(b => INT.forEach(([i]) => CANON.set(N(b + '-' + i), b + '-' + i)));
+const EN_SQ = {}, EN_ANG = {};
+[...NS_GROUPS.flatMap(g => g[1]), ...BG_PLAIN].forEach(([t, en]) => { if (!/[,(]/.test(en)) EN_SQ[en.toLowerCase()] = t });
+Object.assign(EN_SQ, { 'laughter':'হাসি','laughs':'হাসি','laughing':'হাসি','coughs':'কাশি','coughing':'কাশি','breathing':'নিঃশ্বাস','inaudible':'অবোধগম্য','unintelligible':'অবোধগম্য','crying':'কান্না','music':'গান','noise':'পিছনের শব্দ-অন্যান্য-পরিষ্কার','foreign':'বৈদেশিক','অন্যান্য-শব্দ':'অন্যান্য-মৌখিক-শব্দ','other':'অন্যান্য-মৌখিক-শব্দ' });
+[...STYLE, ...EMO].forEach(([t, en]) => { en.split(/,\s*/).forEach(e => EN_ANG[e.toLowerCase()] = t) });
+Object.assign(EN_ANG, { 'laugh':'হাসিমাখা-কথা','singing':'গান/সুর','sing':'গান/সুর','elongated':'প্রসারিত','affected':'অভিনয়ধর্মী','distorted':'বিকৃত','happy':'উচ্ছ্বসিত','excited':'উচ্ছ্বসিত','sad':'বিষণ্ণ','angry':'ক্রুদ্ধ','fear':'ভীত','scared':'ভীত','calm':'আস্থাশীল','disgust':'ঘৃণাপূর্ণ','surprise':'বিস্মিত','foreign':'বৈদেশিক' });
+function canonSq(k) {
+  k = k.trim().replace(/\s+/g, ' ');
+  const n = N(k);
+  if (CANON.has(n)) return CANON.get(n);
+  if (EN_SQ[k.toLowerCase()]) return EN_SQ[k.toLowerCase()];
+  const d = n.match(/^(.*)-([০-২0-2])$/);
+  if (d) { const b = CANON.get(N(d[1])); if (b && BGI.includes(b)) return b + '-' + INT_DIGIT[d[2]] }
+  return k;
+}
+function canonAng(name) { const n = N(name.trim()); return CANON.has(n) && ST.includes(CANON.get(n)) ? CANON.get(n) : (EN_ANG[name.trim().toLowerCase()] || name.trim()) }
+
 const FILLERS = { 'ওহহহো':'ওহহো','হুহ-হুহ':'হু-হু','আহ-হা':'আহা','আআআ':'আ','অঅঅ':'অ','হুউউ':'হু','হুমম':'হুম','হুহহ':'হুহ','হেহহ':'হেহ','ম-হুম':'মহুম','আহহ':'আহ','অউউ':'অউ','এহহ':'এহ','ওহহ':'ওহ','অহহ':'ওহ','উউহ':'উহ','মহম':'মহুম','হুউ':'হু','আআ':'আ','অঅ':'অ','হম':'হুম' };
 const FILL_RE = new RegExp(NB + '(' + Object.keys(FILLERS).join('|') + ')' + NA, 'g');
 const REDUP_OK = new Set(['হু','হা','হি','হে','টুক','ঘেউ','মিউ']); // real reduplicated words, not stutters
@@ -39,10 +60,11 @@ const MONTHS = 'জানুয়ারি|ফেব্রুয়ারি|�
 /* tokens: {{note}}, {PRO:..}, [..], <..> */
 const TOK = /(\{\{[^}]*\}\}|\{[^}]*\}|\[[^\]]*\]|<[^>]*>)/;
 const plain = x => x.replace(/\{\{[^}]*\}\}|\{[^}]*\}|\[[^\]]*\]|<[^>]*>/g, ' ');
-const TAIL = /(?:\s*(?:\[[^\]]*\]|<\/[^>]*>|\{\{[^}]*\}\}|\{[^}]*\}))+\s*$/;
+const TAIL = /(?:\s*(?:\[[^\]]*\]|<\/[^>]*>|\{\{[^}]*\}\}|\{MIS:[^}]*\}))+\s*$/; // {PRO:} counts as text
 const ENDP = /(।|\?|!|…|\.\.\.|--)["”’'»)]*$/;
 
 function sqTag(k) {
+  k = CANON.get(N(k)) || k;
   if (NS.includes(k) || BGP.includes(k)) return null;
   if (k === 'অন্যান্য-শব্দ') return 'Renamed tag: use [অন্যান্য-মৌখিক-শব্দ] (v3.1.4)';
   for (const b of BGI) {
@@ -60,7 +82,7 @@ function sqTag(k) {
 
 function lint(x) {
   const m = [], add = s => { if (!m.includes(s)) m.push(s) };
-  if (!x.trim()) return ['Not transcribed yet'];
+  if (!x.trim()) return ['Empty: add text'];
 
   // end punctuation (tags go after it)
   const tm = x.match(TAIL), tail = tm ? tm[0] : '', core = (tm ? x.slice(0, x.length - tail.length) : x).trim();
@@ -82,7 +104,7 @@ function lint(x) {
   // angle tags: known, closed, properly nested, emotions not overlapping
   const stack = []; let emoOpen = 0, emoStart = -1;
   for (const r of x.matchAll(/<(\/?)\s*([^>=\s]+)\s*(=\s*["“”']?([A-Za-z]{2,3})?["“”']?)?\s*>/g)) {
-    const close = !!r[1], k = r[2];
+    const close = !!r[1], k = CANON.get(N(r[2])) || r[2];
     if (!ST.includes(k)) { add(`Unknown tag <${k}>`); continue }
     if (r[3] && k !== 'বৈদেশিক') add(`<${k}> takes no attribute`);
     if (r[3] && !r[4]) add('Language code needed, e.g. <বৈদেশিক="EN">');
@@ -133,6 +155,10 @@ function lint(x) {
   for (const r of px.matchAll(FILL_RE)) add(`Filler spelling: "${r[1]}" → "${FILLERS[r[1]]}" (2.8)`);
   if (/([\u0980-\u09FFA-Za-z])\1{3,}/.test(px.replace(/[০-৯0-9]/g, ''))) add('Letters stretched: write the word once inside <প্রসারিত> (6.3)');
   if (/(।|\?|!){2,}/.test(x.replace(/\?!/g, ''))) add('~Repeated punctuation');
+  if (/\|/.test(px)) add('Use দাঁড়ি "।" instead of "|"');
+  const tx = x.replace(/\{\{[^}]*\}\}|\{[^}]*\}|\[[^\]]*\]|<[^>]*>/g, 'X');
+  if (/\s[।?!,](?!-)/.test(tx)) add('No space before । ? ! , (3.1)');
+  if (/[।?!,](?=[\u0980-\u09E5\u09F0-\u09FFA-WYZa-z])/.test(tx)) add('Space needed after । ? ! ,');
 
   // tag spacing
   for (const r of x.matchAll(/\[[^\]]+\]/g)) {
@@ -156,18 +182,32 @@ function lint(x) {
 
 /* ---------------- automatic fixes ---------------- */
 function fix(x) {
-  x = String(x).replace(/\s+/g, ' ').trim();
+  x = String(x).replace(/[\u00A0\u2000-\u200B\u202F\u3000\t]/g, ' ').replace(/\s+/g, ' ').trim();
   if (!x) return x;
-  x = x.replace(/\s*[—–]\s*/g, ' - ').replace(/\[অন্যান্য-শব্দ\]/g, '[অন্যান্য-মৌখিক-শব্দ]');
-  x = x.replace(/\[([^\]]+)-([০-২0-2])\]/g, (s, b, d) => BGI.includes(b) ? `[${b}-${INT_DIGIT[d]}]` : s);
+  x = x.replace(/\s*[—–]\s*/g, ' - ').replace(/[‐‑−]/g, '-');
+
+  // tags: trim, unify spelling, translate English tag names, fix intensity digits
+  x = x.replace(/\[\s*([^\]]*?)\s*\]/g, (s, k) => /^\{/.test(k) ? s : '[' + canonSq(k) + ']');
+  x = x.replace(/<\s*(\/?)\s*([^>=]+?)\s*(?:=\s*["“”'‘’]?\s*([A-Za-z]{2,3})\s*["“”'‘’]?)?\s*>/g, (s, c, k, lang) => {
+    const t = canonAng(k);
+    if (!ST.includes(t)) return s;
+    return '<' + c + t + (lang && !c && t === 'বৈদেশিক' ? '="' + lang.toUpperCase() + '"' : '') + '>';
+  });
+  x = x.replace(/\{\s*(PRO|MIS|pro|mis)\s*:\s*([^}]*?)\s*\}/g, (s, k, v) => '{' + k.toUpperCase() + ': ' + v + '}');
 
   // text-only fixes (never touch anything inside tags)
   const parts = x.split(TOK);
   for (let i = 0; i < parts.length; i += 2) {
     let p = parts[i];
+    p = p.replace(/\|/g, '।');
+    p = p.replace(/(?<!ডা|ড|মি|Dr|Mr|Mrs|Ms|[.\s])([\u0980-\u09E5\u09F0-\u09FF])\.(?!\.)(?=\s|$|["”’'])/g, '$1।');
+    p = p.replace(/।{2,}/g, '।').replace(/\?{2,}/g, '?').replace(/!{2,}/g, '!');
+    p = p.replace(/\s+([।?!,](?!-))/g, '$1');
+    p = p.replace(/([।?!,])(?=[\u0980-\u09E5\u09F0-\u09FFA-Za-z])/g, '$1 ');
     p = p.replace(FILL_RE, k => FILLERS[k]);
     p = p.replace(new RegExp(NB + `([${LET}]+)-(?=\\1` + NA + ')', 'g'), (s, w) => REDUP_OK.has(w) ? s : w + ' - ');
     p = p.replace(/--(?=[^\s"”’'.\])>-])/g, '-- ');
+    p = p.replace(/([০-৯0-9])\s*(a\.?\s?m\.?|p\.?\s?m\.?)(?![A-Za-z])/gi, (s, d, ap) => d + ' ' + (/^a/i.test(ap) ? 'AM' : 'PM'));
     parts[i] = p;
   }
   // spaces around [..] and <..>; one space before {..}
@@ -181,16 +221,18 @@ function fix(x) {
     if (nx && /^[^\s।?!]/.test(nx) && !(curly && /^[,]/.test(nx))) out += ' ';
   });
   x = out.replace(/(\[[^\]]+\])(\s*\1)+/g, '$1').replace(/\s+/g, ' ').trim();
+  x = x.replace(/^((?:\[[^\]]*\]\s*|<[^/][^>]*>\s*)*)(\.\.\.|…)\s+/, '$1$2'); // "... এরপরে" at the start -> "...এরপরে"
+  x = x.replace(/^((?:\[[^\]]*\]\s*|<[^>]*>\s*|[“"‘'(]|\.\.\.|…)*)([a-z])/, (s, a, c) => a + c.toUpperCase());
 
   // move end punctuation from after the trailing tags to before them
-  const mv = x.match(/^(.*?\S)((?:\s*(?:\[[^\]]*\]|<\/[^>]*>|\{\{[^}]*\}\}|\{[^}]*\}))+)\s*([।?!]+|…|\.\.\.)$/);
+  const mv = x.match(/^(.*?\S)((?:\s*(?:\[[^\]]*\]|<\/[^>]*>|\{\{[^}]*\}\}|\{MIS:[^}]*\}))+)\s*([।?!]+|…|\.\.\.)$/);
   if (mv && !ENDP.test(mv[1])) x = mv[1] + mv[3] + mv[2];
 
   // add missing end punctuation
-  const tm = x.match(TAIL), tail = tm ? tm[0] : '', core = tm ? x.slice(0, x.length - tail.length) : x;
   if (/<[^>]*$|\[[^\]]*$|\{[^}]*$/.test(x)) return x.replace(/\s+/g, ' ').trim(); // broken tag: leave for the user
+  const tm = x.match(TAIL), tail = tm ? tm[0] : '', core = tm ? x.slice(0, x.length - tail.length) : x;
   if (core.trim() && !ENDP.test(core.trim()) && !/^\s*\[অবোধগম্য\]/.test(tail) && !/\.["”’']*$/.test(core.trim()))
-    x = core.trimEnd() + (/[A-Za-z]["”’']*$/.test(core.trim()) ? '.' : '।') + tail;
+    x = core.trimEnd() + (/[\u0980-\u09FF]/.test(plain(core)) ? '।' : '.') + tail;
   return x.replace(/\s+/g, ' ').trim();
 }
 

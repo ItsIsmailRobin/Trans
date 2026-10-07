@@ -8,83 +8,80 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 16 16"><path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 16 16"><path d="M4 3v10M12.5 3.5 6 8l6.5 4.5z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-next" viewBox="0 0 16 16"><path d="M12 3v10M3.5 3.5 10 8l-6.5 4.5z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 16 16"><path d="M3 8a5 5 0 1 0 1.5-3.6M3 2.5v2.8h2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-fwd" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 16 16"><path d="M5.5 4 2.5 7l3 3M3 7h6.5a3.5 3.5 0 0 1 0 7H8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 16 16"><path d="M10.5 4l3 3-3 3M13 7H6.5a3.5 3.5 0 0 0 0 7H8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
 
 <header class="top">
   <div class="brand"><span class="mark" aria-hidden="true">TF</span><b>TranscribeFix</b></div>
-
   <div class="tracks">
-    <div class="chip s1" id="chip1">
-      <span class="sw" aria-hidden="true"></span>
-      <label class="pick" title="Choose Speaker 1 audio (click again to replace)"><small>Speaker 1</small><span id="n1">Add audio</span><input type="file" id="f1" accept="audio/*,video/*"></label>
-      <button class="rm" id="rm1" title="Remove Speaker 1 audio" aria-label="Remove Speaker 1 audio" hidden>✕</button>
-    </div>
-    <div class="chip s2" id="chip2">
-      <span class="sw" aria-hidden="true"></span>
-      <label class="pick" title="Choose Speaker 2 audio (click again to replace)"><small>Speaker 2</small><span id="n2">Add audio</span><input type="file" id="f2" accept="audio/*,video/*"></label>
-      <button class="rm" id="rm2" title="Remove Speaker 2 audio" aria-label="Remove Speaker 2 audio" hidden>✕</button>
-    </div>
+    <div class="chip s1" id="chip1"><span class="sw"></span>
+      <label class="pick" title="Choose Speaker 1 audio (click again to replace)"><small>S1</small><span id="n1">Add audio</span><input type="file" id="f1" accept="audio/*,video/*"></label>
+      <button class="rm" id="rm1" title="Remove Speaker 1 audio" hidden><svg><use href="#i-x"/></svg></button></div>
+    <div class="chip s2" id="chip2"><span class="sw"></span>
+      <label class="pick" title="Choose Speaker 2 audio (click again to replace)"><small>S2</small><span id="n2">Add audio</span><input type="file" id="f2" accept="audio/*,video/*"></label>
+      <button class="rm" id="rm2" title="Remove Speaker 2 audio" hidden><svg><use href="#i-x"/></svg></button></div>
+  </div>
+
+  <div class="transport">
+    <button id="pv" class="ic" title="Previous line (Alt+↑)"><svg><use href="#i-prev"/></svg></button>
+    <button id="bk" class="ic" title="Back 2s (Alt+←)"><svg><use href="#i-back"/></svg></button>
+    <button id="pp" class="ic play" title="Play / pause (Space or Ctrl+Enter)"><svg><use href="#i-play"/></svg></button>
+    <button id="fw" class="ic" title="Forward 2s (Alt+→)"><svg><use href="#i-fwd"/></svg></button>
+    <button id="nx" class="ic" title="Next line (Alt+↓ or Enter)"><svg><use href="#i-next"/></svg></button>
+    <span id="tm" class="clock">00:00.00 / 00:00.00</span>
+    <button id="lp" class="tg" title="Loop the line (Alt+L)">Loop</button>
+    <button id="bt" class="tg" title="Hear both speakers (Alt+B)">Both</button>
+    <select id="rt" title="Speed"><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select>
+    <label class="rng" title="Zoom waveform"><span>Zoom</span><input type="range" id="zm" min="1" max="20" step=".5" value="1"></label>
   </div>
 
   <div class="acts">
-    <button id="tr" class="primary" title="Fill lines with a Bengali machine draft">Transcribe</button>
-    <label class="btn" title="Import a machine transcript (JSON or TXT)">Import<input type="file" id="imp" accept=".json,.txt"></label>
+    <button id="addt" title="Paste or upload text from your transcription site">Add transcript</button>
     <details class="menu"><summary class="btn">Export</summary>
-      <div class="pop"><button id="xj">Transcript as JSON</button><button id="xt">Transcript as TXT</button></div>
-    </details>
+      <div class="pop"><button id="xj">Transcript as JSON</button><button id="xt">Transcript as TXT</button></div></details>
   </div>
 </header>
 
-<nav class="ctl" aria-label="Playback and editing">
-  <div class="grp">
-    <button id="pv" class="ib" title="Previous line (Alt+↑)">⏮</button>
-    <button id="bk" class="ib" title="Back 2s (Alt+←)">⏪</button>
-    <button id="pp" class="play" title="Play / pause (Space or Ctrl+Enter)">▶</button>
-    <button id="fw" class="ib" title="Forward 2s (Alt+→)">⏩</button>
-    <button id="nx" class="ib" title="Next line (Alt+↓ or Enter)">⏭</button>
-    <span id="tm" class="clock">00:00.00 / 00:00.00</span>
-  </div>
-  <div class="grp">
-    <button id="lp" class="tg" title="Loop the line (Alt+L)">Loop</button>
-    <button id="bt" class="tg" title="Hear both speakers together (Alt+B)">Both</button>
-    <select id="rt" title="Speed"><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select>
-    <label class="rng" title="Zoom waveform">Zoom<input type="range" id="zm" min="1" max="20" step=".5" value="1"></label>
-    <label class="rng" title="Speech detection level for Auto-segment and Snap">Sensitivity<input type="range" id="sens" min="2" max="30" value="8"></label>
-  </div>
-  <div class="grp">
-    <button id="as" title="Cut each track into lines at 1s+ silences">Auto-segment</button>
-    <button id="a1" class="spk1" title="New Speaker 1 line at playhead">+ S1</button>
-    <button id="a2" class="spk2" title="New Speaker 2 line at playhead">+ S2</button>
-    <button id="sp" title="Split at playhead (Alt+S)">Split</button>
-    <button id="mg" title="Merge with next line (Alt+M)">Merge</button>
-    <button id="sn" title="Snap edges to speech (Alt+T)">Snap</button>
-    <button id="af" title="Apply automatic style-guide fixes to every line">Fix rules</button>
-    <button id="un" class="ib" title="Undo (Alt+Z)">↶</button>
-    <button id="re" class="ib" title="Redo (Alt+Y)">↷</button>
-  </div>
+<nav class="tools" aria-label="Editing">
+  <button id="as" title="Cut each track into lines at 1s+ silences. Keeps every sound.">Auto-segment</button>
+  <button id="a1" class="spk1" title="New Speaker 1 line at playhead">+S1</button>
+  <button id="a2" class="spk2" title="New Speaker 2 line at playhead">+S2</button>
+  <button id="sp" title="Split at playhead (Alt+S)">Split</button>
+  <button id="mg" title="Merge with next line (Alt+M)">Merge</button>
+  <button id="sn" title="Snap edges to speech (Alt+T)">Snap</button>
+  <button id="un" class="ic" title="Undo (Alt+Z)"><svg><use href="#i-undo"/></svg></button>
+  <button id="re" class="ic" title="Redo (Alt+Y)"><svg><use href="#i-redo"/></svg></button>
+  <button id="af" class="primary" title="Check every line and fix what can be fixed automatically (Alt+F)">Fix transcript</button>
+  <span class="gap"></span>
+  <select id="flt" aria-label="Show lines"><option value="0">All lines</option><option value="1">Speaker 1</option><option value="2">Speaker 2</option><option value="e">With errors</option><option value="u">Not reviewed</option></select>
+  <span class="pill" id="cnt"></span>
 </nav>
+<div id="st" role="status"></div>
 
 <section id="wave" hidden>
-  <div id="lbs">
-    <div class="spc"></div>
-    <div class="lb s1" id="lb1"><b>Speaker 1</b><span id="ls1"></span><button class="mu" data-n="1">Mute</button></div>
-    <div class="lb s2" id="lb2"><b>Speaker 2</b><span id="ls2"></span><button class="mu" data-n="2">Mute</button></div>
-  </div>
-  <div id="cv"><div id="in"><canvas id="rl" height="20"></canvas><canvas id="c1" height="84"></canvas><canvas id="c2" height="84"></canvas><i id="ph"></i></div></div>
+  <div id="lbs"><div class="spc"></div>
+    <div class="lb s1" id="lb1"><b>S1</b><span id="ls1"></span><button class="mu" data-n="1" title="Mute Speaker 1">Mute</button></div>
+    <div class="lb s2" id="lb2"><b>S2</b><span id="ls2"></span><button class="mu" data-n="2" title="Mute Speaker 2">Mute</button></div></div>
+  <div id="cv"><div id="in"><canvas id="rl" height="18"></canvas><canvas id="c1" height="64"></canvas><canvas id="c2" height="64"></canvas><i id="ph"></i></div></div>
 </section>
 
 <main class="work">
   <section class="lines">
-    <div class="bar">
-      <select id="flt" aria-label="Show lines"><option value="0">All lines</option><option value="1">Speaker 1</option><option value="2">Speaker 2</option><option value="e">With errors</option><option value="u">Not reviewed</option></select>
-      <span class="pill" id="cnt"></span>
-      <span id="st" role="status"></span>
-    </div>
     <div id="empty" class="empty">
-      <h2>Start with the two speaker tracks</h2>
-      <p>Drop or choose one audio file per speaker. Then press <b>Transcribe</b> for a Bengali draft, or <b>Auto-segment</b> and type it yourself.</p>
+      <h2>Add the two speaker tracks</h2>
+      <p>1. Add audio for each speaker. 2. Auto-segment and fix the line edges. 3. Add transcript from your site. 4. Fix transcript.</p>
       <div class="drops">
-        <label class="drop s1" data-n="1"><span class="sw"></span><b>Speaker 1 audio</b><small>Drop a file or click to choose</small><input type="file" accept="audio/*,video/*"></label>
-        <label class="drop s2" data-n="2"><span class="sw"></span><b>Speaker 2 audio</b><small>Drop a file or click to choose</small><input type="file" accept="audio/*,video/*"></label>
+        <label class="drop s1" data-n="1"><span class="sw"></span><b>Speaker 1 audio</b><small>Drop a file or click</small><input type="file" accept="audio/*,video/*"></label>
+        <label class="drop s2" data-n="2"><span class="sw"></span><b>Speaker 2 audio</b><small>Drop a file or click</small><input type="file" accept="audio/*,video/*"></label>
       </div>
     </div>
     <div id="tb"><div id="rows"></div></div>
@@ -92,93 +89,56 @@
 
   <aside class="side">
     <div class="tabs" role="tablist">
-      <button role="tab" data-tab="tags" class="on">Tags</button>
-      <button role="tab" data-tab="guide">Guide</button>
-      <button role="tab" data-tab="keys">Shortcuts</button>
+      <button data-tab="tags" class="on">Tags</button><button data-tab="guide">Guide</button><button data-tab="keys">Keys</button>
     </div>
-
     <div class="pane" id="tab-tags">
-      <input id="tq" type="search" placeholder="Search: কাশি, cough, laugh…  (Alt+K)" autocomplete="off">
-      <p class="hint" id="thint">Click inside a line, then click a tag. Select words first to wrap them in a style tag.</p>
+      <input id="tq" type="search" placeholder="Search: কাশি, cough, laugh… (Alt+K)" autocomplete="off">
+      <p class="hint" id="thint">Click in a line, then a tag. Select words first to wrap them.</p>
       <div id="tagbox"></div>
     </div>
-
     <div class="pane" id="tab-guide" hidden>
-      <h3>Style guide v3.1.5 essentials</h3>
       <ol class="guide">
         <li>New segment only after 1s+ silence. Shorter gaps stay in one segment.</li>
-        <li>Every segment ends with । ? ! … or <code>--</code>. Tags go after the punctuation: <code>এটা? [হাঁফ]</code>. Exception: a sentence ending in <code>[অবোধগম্য]</code>.</li>
-        <li>One-word stutter: <code>আমি - আমি</code>. Multi-word restart or cut-off word: <code>চাই-- আমি</code>. Resume after a pause: <code>...শব্দ</code>.</li>
-        <li>Numbers in digits with <code>১৪ {PRO: চোদ্দ}</code>. Idioms (একমাত্র, প্রথমত) and names (PlayStation 5) need no PRO.</li>
-        <li>Wrong real word: keep as said. Non-word with clear intent: <code>কর্ম {MIS: কম্ম}</code>. Unclear intent: phonetic. Can't hear it: <code>[অবোধগম্য]</code>.</li>
-        <li>English proper nouns in English (YouTube, iPhone X). Acronyms as usual (নাসা, SQL {PRO: Sequel}).</li>
-        <li>Standard fillers only: আহ আহা অউ এহ আ অ হুম হুহ হু-হু হু হেহ মহুম আম ওহ ওহহো উহ.</li>
-        <li>Spaces around every tag: <code>[কাশি] কথা</code>, <code>&lt;প্রসারিত&gt; কঠিন &lt;/প্রসারিত&gt;</code>. Never inside {PRO:} or {MIS:}. Repeated sounds: tag once.</li>
-        <li><code>*জোর*</code> rarely. Emotion tags under 1% of words, never overlapping, about 50 words max.</li>
-        <li>Don't tag ordinary breaths or lip clicks. Never transcribe channel bleed: tag it <code>[পটভূমি-কথা]</code> or <code>[পিছনের শব্দ-অন্যান্য-…]</code>.</li>
-        <li><code>[ঠকঠক]</code>, <code>[পিছনের শব্দ-অন্যান্য]</code>, <code>[স্ট্যাটিক]</code>, <code>[যান্ত্রিক-গুঞ্জন]</code> need intensity: ধীর, পরিষ্কার or উচ্চস্বর. Other background tags take none.</li>
-        <li><code>[অন্যান্য-শব্দ]</code> is now <code>[অন্যান্য-মৌখিক-শব্দ]</code>; add a note like <code>{{জিভের শব্দ}}</code>.</li>
-        <li>Timestamps within 50ms: no clipping, no padding. When unsure, a little extra silence is better than a cut word.</li>
-        <li>Hard parts: turn on <b>Both</b> and listen 5 to 10 seconds around them.</li>
+        <li>End every segment with । ? ! … or <code>--</code>. Tags after punctuation: <code>এটা? [হাঁফ]</code>. A sentence may end with <code>[অবোধগম্য]</code>.</li>
+        <li>Stutter <code>আমি - আমি</code>. Restart or cut-off <code>চাই-- আমি</code>. Resume <code>...শব্দ</code>.</li>
+        <li>Numbers: <code>১৪ {PRO: চোদ্দ}</code>. Idioms (একমাত্র) and names (PlayStation 5) need no PRO.</li>
+        <li>Wrong real word: keep it. Non-word, clear intent: <code>কর্ম {MIS: কম্ম}</code>. Unclear: phonetic. Can't hear: <code>[অবোধগম্য]</code>.</li>
+        <li>English names in English (YouTube). Acronyms as usual (SQL {PRO: Sequel}).</li>
+        <li>Fillers: আহ আহা অউ এহ আ অ হুম হুহ হু-হু হু হেহ মহুম আম ওহ ওহহো উহ.</li>
+        <li>Space around every tag. No tags inside {PRO:}/{MIS:}. Repeated sound: tag once.</li>
+        <li><code>*জোর*</code> rarely. Emotion tags under 1% of words, not overlapping, about 50 words max.</li>
+        <li>Skip ordinary breaths and lip clicks. Never transcribe channel bleed; tag <code>[পটভূমি-কথা]</code>.</li>
+        <li><code>[ঠকঠক]</code>, <code>[পিছনের শব্দ-অন্যান্য]</code>, <code>[স্ট্যাটিক]</code>, <code>[যান্ত্রিক-গুঞ্জন]</code> need ধীর, পরিষ্কার or উচ্চস্বর.</li>
+        <li><code>[অন্যান্য-শব্দ]</code> is now <code>[অন্যান্য-মৌখিক-শব্দ]</code> + <code>{{note}}</code>.</li>
+        <li>Timestamps within 50ms. When unsure, a little silence beats a cut word.</li>
       </ol>
     </div>
-
     <div class="pane" id="tab-keys" hidden>
       <dl class="keys">
-        <dt>Space or Ctrl+Enter</dt><dd>Play or pause the line</dd>
-        <dt>Enter</dt><dd>Next line and play</dd>
-        <dt>Alt+↑ / Alt+↓</dt><dd>Previous / next line</dd>
-        <dt>Alt+← / Alt+→</dt><dd>Back / forward 2 seconds</dd>
-        <dt>Alt+L</dt><dd>Loop line</dd>
-        <dt>Alt+B</dt><dd>Hear both speakers</dd>
-        <dt>Alt+K</dt><dd>Search tags (Enter inserts the first)</dd>
-        <dt>Alt+R</dt><dd>Transcribe this line</dd>
-        <dt>Alt+N</dt><dd>New line at playhead</dd>
-        <dt>Alt+S / Alt+M</dt><dd>Split / merge</dd>
-        <dt>Alt+T</dt><dd>Snap edges to speech</dd>
-        <dt>Alt+Z / Alt+Y</dt><dd>Undo / redo</dd>
+        <dt>Space, Ctrl+Enter</dt><dd>Play / pause line</dd><dt>Enter</dt><dd>Next line</dd>
+        <dt>Alt+↑ ↓</dt><dd>Previous / next line</dd><dt>Alt+← →</dt><dd>Back / forward 2s</dd>
+        <dt>Alt+L</dt><dd>Loop</dd><dt>Alt+B</dt><dd>Both speakers</dd>
+        <dt>Alt+F</dt><dd>Fix transcript</dd><dt>Alt+K</dt><dd>Search tags</dd>
+        <dt>Alt+N</dt><dd>New line</dd><dt>Alt+S / M</dt><dd>Split / merge</dd>
+        <dt>Alt+T</dt><dd>Snap</dd><dt>Alt+Z / Y</dt><dd>Undo / redo</dd>
       </dl>
-      <p class="hint">On the waveform: drag on empty space to add a line, drag a line's edge to resize, double-click a line to play it. Work saves automatically in this browser for each pair of audio files.</p>
+      <p class="hint">Waveform: drag empty space to add a line, drag an edge to resize, double-click to play. Work autosaves per pair of audio files.</p>
     </div>
   </aside>
 </main>
 
-<dialog id="trd">
+<dialog id="tdlg">
   <form method="dialog" class="dlg">
-    <h3>Transcribe audio</h3>
-    <p class="hint">Creates a Bengali machine draft for your lines. Machine drafts contain mistakes: check every line by ear before marking it reviewed.</p>
-
-    <fieldset class="seg"><legend>Engine</legend>
-      <label><input type="radio" name="eng" value="local" checked><span><b>In this browser</b><small>Free and private. The model downloads once, then works offline.</small></span></label>
-      <label><input type="radio" name="eng" value="api"><span><b>Online API</b><small>Best Bengali accuracy. Uses your own API key.</small></span></label>
+    <h3>Add transcript</h3>
+    <p class="hint">Paste text from your transcription site or choose a file (TXT, JSON, SRT). One line per segment. Lines may start with a time range and/or <code>Speaker 1:</code>.</p>
+    <textarea id="tin" rows="9" spellcheck="false" placeholder="[00:01.20 - 00:03.50] Speaker 1: আমি ভালো আছি।&#10;Speaker 2: তুমি কেমন আছ?&#10;অথবা শুধু লেখা, প্রতি লাইনে একটি সেগমেন্ট"></textarea>
+    <div class="row2"><label class="btn">Choose file<input type="file" id="tfile" accept=".txt,.json,.srt,.vtt,.csv,.tsv"></label><span id="tinfo" class="hint"></span></div>
+    <fieldset class="seg"><legend>Where should the text go?</legend>
+      <label><input type="radio" name="tmode" value="keep" checked><span><b>Into my current lines</b><small>Keeps my timestamps. Timed text goes to the line it overlaps; plain text fills lines in order.</small></span></label>
+      <label><input type="radio" name="tmode" value="replace"><span><b>Replace my lines</b><small>Uses the times in the text.</small></span></label>
     </fieldset>
-
-    <div id="eng-local" class="fields">
-      <label>Model<select id="lm"></select></label>
-      <p class="hint">Small or Large give much better Bengali than Base. Large needs Chrome or Edge with a GPU.</p>
-    </div>
-    <div id="eng-api" class="fields" hidden>
-      <label>Provider<select id="ap"></select></label>
-      <label>API key<input id="ak" type="password" autocomplete="off" placeholder="Paste your key"></label>
-      <label>Model<input id="am" autocomplete="off"></label>
-      <label id="au-wrap">API base URL<input id="au" autocomplete="off" placeholder="https://…/v1"></label>
-      <label>Style hint<input id="apr" autocomplete="off"></label>
-      <p class="hint">The key is kept only in this browser. Audio of each line is sent to the provider you choose.</p>
-    </div>
-
-    <fieldset class="seg"><legend>Lines</legend>
-      <label><input type="radio" name="scope" value="empty" checked><span><b>Empty lines only</b></span></label>
-      <label><input type="radio" name="scope" value="all"><span><b>All lines</b><small>Replaces existing text</small></span></label>
-      <label><input type="radio" name="scope" value="sel"><span><b>Selected line</b></span></label>
-    </fieldset>
-    <label class="chk"><input type="checkbox" id="afx" checked> Apply style-guide fixes to the draft</label>
-    <p class="hint">No lines yet? Transcribe runs Auto-segment first.</p>
-
-    <div class="prog" id="prog" hidden><div><i id="pbar"></i></div><span id="ptxt"></span></div>
-    <footer>
-      <button value="close" id="trclose">Close</button>
-      <button type="button" id="trgo" class="primary">Start transcribing</button>
-    </footer>
+    <label class="chk"><input type="checkbox" id="tfix" checked> Run Fix transcript after adding</label>
+    <footer><button value="close">Cancel</button><button type="button" id="tgo" class="primary">Add transcript</button></footer>
   </form>
 </dialog>
 

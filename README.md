@@ -1,7 +1,7 @@
-# TranscribeFix 2
+# TranscribeFix 2.1
 
 Bengali 2-speaker transcription workbench, synced with the BN Style Guide v3.1.5 and the BN Tag Taxonomy.
-Runs in the browser; nothing is stored on a server.
+Runs fully in the browser: no AI, no server, no API keys.
 
 ## Run
     npm install
@@ -9,16 +9,17 @@ Runs in the browser; nothing is stored on a server.
     npm run build    # outputs dist/
 
 ## Deploy on Vercel
-Push this folder to GitHub and import it in Vercel. It is detected as a Vite project (build `npm run build`, output `dist`). No environment variables.
-The style guide is confidential: turn on Vercel Deployment Protection (password) for the project.
+Push this folder to GitHub and import it in Vercel (Vite project: build `npm run build`, output `dist`). No environment variables.
+The style guide is confidential: turn on Vercel Deployment Protection (password).
 
 ## Workflow
-1. Add Speaker 1 and Speaker 2 audio (click or drag a file onto the chip). Click a file name to replace it, or ✕ to remove it.
-2. Press **Transcribe** for a Bengali machine draft (it runs Auto-segment first if there are no lines), or Import a machine transcript.
-   - **In this browser**: free and private Whisper. The model downloads once (Small ≈ 250 MB), then is cached.
-   - **Online API**: best accuracy. Works with Groq (`whisper-large-v3`), OpenAI (`gpt-4o-transcribe`) or any OpenAI-compatible endpoint, using your own key (kept only in this browser).
-3. Select a line to play it. Correct the text; insert tags from the Tags panel (search in Bengali or English, Alt+K, Enter inserts the first match).
-4. Fix timestamps by dragging edges, typing times, or Snap. Use Both to hear both speakers on hard parts.
-5. Run Fix rules, clear every red dot, tick Reviewed, export.
-
-Lines show "Machine draft" until you edit or review them. Work autosaves in this browser per pair of audio files.
+1. Add Speaker 1 and Speaker 2 audio. Click a file name to replace it, ✕ to remove it.
+2. **Auto-segment**: splits only at silences of 1s or more and keeps every sound (detection is fixed at Low, all channels are checked).
+3. Fix the line edges: drag on the waveform, type times, or Snap.
+4. **Add transcript**: paste or upload the text from your transcription site (TXT, JSON, SRT/VTT).
+   - Plain lines fill your lines in time order (or per speaker if each line starts with `Speaker 1:` / `Speaker 2:`).
+   - Timed lines go into the line they overlap. Anything that doesn't fit stays in the box.
+5. **Fix transcript** (Alt+F): fixes spacing, দাঁড়ি, punctuation before tags, stutter dashes, `--`, fillers, tag spelling and spacing,
+   English tag names ([laugh] → [হাসি]), intensity, AM/PM, end punctuation. Changed lines show "Auto-fixed" (hover to see the text before).
+   Red dots are what only you can fix (for example {PRO:} after numbers). Filter "With errors" to see them.
+6. Listen, tick Reviewed, Export.
